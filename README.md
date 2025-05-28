@@ -84,8 +84,15 @@ Coming soon with Swagger!
 
 ## 🤝 Contributing
 
-We love contributors!
-Please check CONTRIBUTING.md for guidelines.
+🤝 Contributing  
+We love contributors! Please check [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
+
+To ensure smooth and real-time communication, **joining our [Telegram group](https://t.me/+1JUUa-h0MH8yM2Vk)** is a required step before contributing.  
+This helps us coordinate efficiently, share updates, and support contributors directly.
+
+Join here 👉 [FashionHive Contributors Group](https://t.me/+1JUUa-h0MH8yM2Vk)
+
+Let’s build FashionHive together! 
 
 ## 📄 License
 
