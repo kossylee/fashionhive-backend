@@ -10,4 +10,13 @@ export class User {
 
   @Column()
   email: string;
+
+  @Column({ default: false })
+  mfaEnabled: boolean;
+
+  @Column({ nullable: true })
+  mfaSecret: string;
+
+  @Column('text', { array: true, nullable: true })
+  mfaBackupCodes: string[];
 }
