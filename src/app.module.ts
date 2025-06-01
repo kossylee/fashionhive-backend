@@ -5,6 +5,8 @@ import { DatabaseModule } from "./database/database.module";
 import { OrderModule } from "./modules/order/order.module";
 import { InventoryModule } from "./modules/inventory/inventory.module";
 import { TailorModule } from "./modules/tailor/tailor.module";
+import { AuthModule } from "./modules/auth/auth.module";
+import { RedisModule } from "./modules/redis/redis.module";
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { TailorModule } from "./modules/tailor/tailor.module";
       isGlobal: true,
     }),
     DatabaseModule,
+    RedisModule,
+    AuthModule,
     UserModule,
     OrderModule,
     InventoryModule,
