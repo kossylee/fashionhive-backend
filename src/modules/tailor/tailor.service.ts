@@ -36,6 +36,26 @@ export class TailorService {
     return matchingTailor;
   }
 
+  async resetWeeklyWorkload(): Promise<void> {
+    await this.tailorRepository
+      .createQueryBuilder()
+      .update(Tailor)
+      .set({ currentWorkload: 0, isAvailable: true })
+      .execute();
+  }
+
+  // CRUD operations
+  async create(createTailorDto: any): Promise<Tailor> {
+    const tailor = this.tailorRepository.create(createTailorDto);
+    return (await this.tailorRepository.save(tailor)) as unknown as Tailor;
+  }
+
+  async update(id: number, updateTailorDto: any): Promise<Tailor> {
+    const tailor = await this.findOne(id);
+    Object.assign(tailor, updateTailorDto);
+    return (await this.tailorRepository.save(tailor)) as unknown as Tailor;
+  }
+
   async updateTailorWorkload(
     tailorId: number,
     orderCount: number
@@ -49,27 +69,9 @@ export class TailorService {
     }
 
     tailor.currentWorkload += orderCount;
-
-    // Update availability based on workload
     tailor.isAvailable = tailor.currentWorkload < tailor.maxWeeklyCapacity;
 
-    const savedTailor = await this.tailorRepository.save(tailor);
-    return Array.isArray(savedTailor) ? savedTailor[0] : savedTailor;
-  }
-
-  async resetWeeklyWorkload(): Promise<void> {
-    await this.tailorRepository
-      .createQueryBuilder()
-      .update(Tailor)
-      .set({ currentWorkload: 0, isAvailable: true })
-      .execute();
-  }
-
-  // CRUD operations
-  async create(createTailorDto: any): Promise<Tailor> {
-    const tailor = this.tailorRepository.create(createTailorDto);
-    const savedTailor = await this.tailorRepository.save(tailor);
-    return Array.isArray(savedTailor) ? savedTailor[0] : savedTailor;
+    return (await this.tailorRepository.save(tailor)) as unknown as Tailor;
   }
 
   async findAll(): Promise<Tailor[]> {
@@ -87,13 +89,6 @@ export class TailorService {
     }
 
     return tailor;
-  }
-
-  async update(id: number, updateTailorDto: any): Promise<Tailor> {
-    const tailor = await this.findOne(id);
-    Object.assign(tailor, updateTailorDto);
-    const savedTailor = await this.tailorRepository.save(tailor);
-    return Array.isArray(savedTailor) ? savedTailor[0] : savedTailor;
   }
 
   async remove(id: number): Promise<void> {

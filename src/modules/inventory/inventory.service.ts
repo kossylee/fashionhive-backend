@@ -24,8 +24,9 @@ export class InventoryService {
     }
 
     const inventory = this.inventoryRepository.create(createInventoryDto);
-    const savedInventory = await this.inventoryRepository.save(inventory);
-    return Array.isArray(savedInventory) ? savedInventory[0] : savedInventory;
+    return (await this.inventoryRepository.save(
+      inventory
+    )) as unknown as Inventory;
   }
 
   async findAll(): Promise<Inventory[]> {
@@ -47,8 +48,9 @@ export class InventoryService {
   async update(id: number, updateInventoryDto: any): Promise<Inventory> {
     const inventory = await this.findOne(id);
     Object.assign(inventory, updateInventoryDto);
-    const savedInventory = await this.inventoryRepository.save(inventory);
-    return Array.isArray(savedInventory) ? savedInventory[0] : savedInventory;
+    return (await this.inventoryRepository.save(
+      inventory
+    )) as unknown as Inventory;
   }
 
   async remove(id: number): Promise<void> {
