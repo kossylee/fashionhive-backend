@@ -97,3 +97,49 @@ Let’s build FashionHive together!
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+```
+fashionhive-backend
+├─ CONTRIBUTING.md
+├─ LICENSE
+├─ package-lock.json
+├─ package.json
+├─ README.md
+├─ src
+│  ├─ app.module.ts
+│  ├─ database
+│  │  └─ database.module.ts
+│  ├─ main.ts
+│  └─ modules
+│     ├─ inventory
+│     │  ├─ dtos
+│     │  │  └─ create-inventory.dto.ts
+│     │  ├─ entities
+│     │  │  └─ inventory.entity.ts
+│     │  ├─ inventory.module.ts
+│     │  └─ inventory.service.ts
+│     ├─ order
+│     │  ├─ dtos
+│     │  │  └─ create-order.dto.ts
+│     │  ├─ entities
+│     │  │  ├─ order-item.entity.ts
+│     │  │  └─ order.entity.ts
+│     │  ├─ order.controller.ts
+│     │  ├─ order.module.ts
+│     │  └─ order.service.ts
+│     ├─ tailor
+│     │  ├─ entities
+│     │  │  └─ tailor.entity.ts
+│     │  ├─ tailor.module.ts
+│     │  └─ tailor.service.ts
+│     └─ user
+│        ├─ dtos
+│        │  └─ create-user.dto.ts
+│        ├─ entities
+│        │  └─ user.entity.ts
+│        ├─ user.controller.ts
+│        ├─ user.module.ts
+│        └─ user.service.ts
+└─ tsconfig.json
+
+```
