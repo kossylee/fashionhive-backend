@@ -25,6 +25,16 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+
+  @Column({ default: false })
+  mfaEnabled: boolean;
+
+  @Column({ nullable: true })
+  mfaSecret: string;
+
+  @Column('text', { array: true, nullable: true })
+  mfaBackupCodes: string[];
+
   @Column()
   password: string;
 
@@ -57,4 +67,5 @@ export class User {
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }
+
 }

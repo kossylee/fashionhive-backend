@@ -9,7 +9,12 @@ import { UserModule } from "./modules/user/user.module";
 import { OrderModule } from "./modules/order/order.module";
 import { InventoryModule } from "./modules/inventory/inventory.module";
 import { TailorModule } from "./modules/tailor/tailor.module";
+
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from "./modules/user/user.module";
+
 import { NotificationsModule } from "./modules/notifications/notifications.module";
+
 
 @Module({
   imports: [
@@ -29,7 +34,10 @@ import { NotificationsModule } from "./modules/notifications/notifications.modul
     OrderModule,
     InventoryModule,
     TailorModule,
+    AuthModule,
+
     NotificationsModule,
+
   ],
   controllers: [],
   providers: [],
