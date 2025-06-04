@@ -15,6 +15,9 @@ export enum OrderStatus {
 
 @Entity()
 export class Order {
+  userId(userId: any, orderId: string) {
+    throw new Error('Method not implemented.');
+  }
   @PrimaryGeneratedColumn()
   id: number;
 

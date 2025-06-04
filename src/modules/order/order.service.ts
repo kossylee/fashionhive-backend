@@ -7,6 +7,8 @@ import { OrderItem } from './entities/order-item.entity';
 import { InventoryService } from '../inventory/inventory.service';
 import { TailorService } from '../tailor/tailor.service';
 import { TailorSpecialty } from '../tailor/entities/tailor.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+
 
 @Injectable()
 export class OrderService {
@@ -18,6 +20,8 @@ export class OrderService {
     private inventoryService: InventoryService,
     private tailorService: TailorService,
     private dataSource: DataSource,
+    private notificationsService: NotificationsService,
+
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
@@ -92,7 +96,6 @@ export class OrderService {
         throw new BadRequestException(`Invalid state transition from ${order.status} to ${newStatus}`);
       }
 
-      // Lock the order for update
       await queryRunner.manager
         .createQueryBuilder()
         .update(Order)
@@ -101,7 +104,6 @@ export class OrderService {
         .andWhere("status = :currentStatus", { currentStatus: order.status })
         .execute();
 
-      // Perform state-specific actions within transaction
       switch (newStatus) {
         case OrderStatus.PAID:
           await this.checkAndReserveInventory(order, queryRunner);
@@ -117,7 +119,6 @@ export class OrderService {
           break;
       }
 
-      // Update status history
       order.status = newStatus;
       order.statusHistory.push({
         status: newStatus,
@@ -131,10 +132,10 @@ export class OrderService {
 
     } catch (err) {
       await queryRunner.rollbackTransaction();
-      if (err.code === '23503') { // Foreign key violation
+      if (err.code === '23503') { 
         throw new BadRequestException('Referenced resource not found');
       }
-      if (err.code === '40001') { // Serialization failure
+      if (err.code === '40001') { 
         throw new ConflictException('Concurrent update detected, please try again');
       }
       throw err;
@@ -201,7 +202,6 @@ export class OrderService {
       throw new ConflictException('No available tailor with matching specialties found');
     }
 
-    // Lock the tailor record
     const lockedTailor = await queryRunner.manager
       .createQueryBuilder()
       .from('tailor')
@@ -222,14 +222,12 @@ export class OrderService {
   private determineRequiredSpecialties(order: Order): TailorSpecialty[] {
     const specialties = new Set<TailorSpecialty>();
     
-    // Logic to determine required specialties based on order items
     for (const item of order.items) {
       if (item.customizations?.type === 'suit') {
         specialties.add(TailorSpecialty.SUITS);
       } else if (item.customizations?.type === 'dress') {
         specialties.add(TailorSpecialty.DRESSES);
       }
-      // Add more specialty determinations based on your needs
     }
     
     return Array.from(specialties);
@@ -242,4 +240,40 @@ export class OrderService {
     }
     await this.orderRepository.remove(order);
   }
+
+    async updateOrderStatus(orderId: number, status: string, trackingNumber?: string): Promise<Order> {
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+        relations: ['user'],
+      });
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    order.status = status as OrderStatus;
+    if (trackingNumber) {
+      order.trackingNumber = trackingNumber;
+    }
+
+    const updatedOrder = await this.orderRepository.save(order);
+
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        await this.notificationsService.notifyOrderConfirmed(order.customer.id.toString(), orderId.toString());
+        break;
+      case 'shipped':
+        await this.notificationsService.notifyOrderShipped(order.customer.id.toString(), orderId.toString(), trackingNumber);
+        break;
+      case 'delivered':
+        await this.notificationsService.notifyOrderDelivered(order.customer.id.toString(), orderId.toString());
+        break;
+      case 'cancelled':
+        await this.notificationsService.notifyOrderCancelled(order.customer.id.toString(), orderId.toString());
+        break;
+    }
+
+    return updatedOrder;
+  }
+
 }

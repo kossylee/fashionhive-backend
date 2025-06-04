@@ -1,26 +1,32 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Inventory } from './entities/inventory.entity';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Inventory } from "./entities/inventory.entity";
 
 @Injectable()
 export class InventoryService {
   constructor(
     @InjectRepository(Inventory)
-    private inventoryRepository: Repository<Inventory>,
+    private inventoryRepository: Repository<Inventory>
   ) {}
 
   async create(createInventoryDto: any): Promise<Inventory> {
-    const existing = await this.inventoryRepository.findOne({ 
-      where: { sku: createInventoryDto.sku } 
+    const existing = await this.inventoryRepository.findOne({
+      where: { sku: createInventoryDto.sku },
     });
-    
+
     if (existing) {
-      throw new ConflictException('Material with this SKU already exists');
+      throw new ConflictException("Material with this SKU already exists");
     }
 
     const inventory = this.inventoryRepository.create(createInventoryDto);
-    return this.inventoryRepository.save(inventory);
+    return (await this.inventoryRepository.save(
+      inventory
+    )) as unknown as Inventory;
   }
 
   async findAll(): Promise<Inventory[]> {
@@ -28,21 +34,23 @@ export class InventoryService {
   }
 
   async findOne(id: number): Promise<Inventory> {
-    const inventory = await this.inventoryRepository.findOne({ 
-      where: { id } 
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id },
     });
-    
+
     if (!inventory) {
-      throw new NotFoundException('Material not found');
+      throw new NotFoundException("Material not found");
     }
-    
+
     return inventory;
   }
 
   async update(id: number, updateInventoryDto: any): Promise<Inventory> {
     const inventory = await this.findOne(id);
     Object.assign(inventory, updateInventoryDto);
-    return this.inventoryRepository.save(inventory);
+    return (await this.inventoryRepository.save(
+      inventory
+    )) as unknown as Inventory;
   }
 
   async remove(id: number): Promise<void> {
@@ -50,26 +58,29 @@ export class InventoryService {
     await this.inventoryRepository.remove(inventory);
   }
 
-  async checkStock(materialId: number, requiredQuantity: number): Promise<boolean> {
+  async checkStock(
+    materialId: number,
+    requiredQuantity: number
+  ): Promise<boolean> {
     const inventory = await this.findOne(materialId);
     return inventory.quantity >= requiredQuantity;
   }
 
   async reduceStock(materialId: number, quantity: number): Promise<void> {
     const inventory = await this.findOne(materialId);
-    
+
     if (inventory.quantity < quantity) {
-      throw new ConflictException('Insufficient stock');
+      throw new ConflictException("Insufficient stock");
     }
-    
+
     inventory.quantity -= quantity;
     await this.inventoryRepository.save(inventory);
   }
 
   async checkLowStock(): Promise<Inventory[]> {
     return this.inventoryRepository
-      .createQueryBuilder('inventory')
-      .where('inventory.quantity <= inventory.reorderPoint')
+      .createQueryBuilder("inventory")
+      .where("inventory.quantity <= inventory.reorderPoint")
       .getMany();
   }
 }
