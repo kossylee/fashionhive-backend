@@ -15,6 +15,8 @@ export enum UserRole {
   ADMIN = "admin",
 }
 
+import { Measurement } from '../../measurement/entities/measurement.entity';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -57,6 +59,10 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // Add relation to Measurement
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  measurements?: Measurement[];
 
   @BeforeInsert()
   async hashPassword() {
