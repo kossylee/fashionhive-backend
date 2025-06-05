@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 
 import { DatabaseModule } from "./database/database.module";
+import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { RedisModule } from "./modules/redis/redis.module";
 import { UserModule } from "./modules/user/user.module";
@@ -31,6 +32,7 @@ import { NotificationsModule } from "./modules/notifications/notifications.modul
     RedisModule,
     AuthModule,
     UserModule,
+    AnalyticsModule,
     OrderModule,
     InventoryModule,
     TailorModule,
