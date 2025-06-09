@@ -10,9 +10,9 @@ import { UserModule } from "./modules/user/user.module";
 import { OrderModule } from "./modules/order/order.module";
 import { InventoryModule } from "./modules/inventory/inventory.module";
 import { TailorModule } from "./modules/tailor/tailor.module";
+import { MeasurementModule } from "./modules/measurement/measurement.module";
 
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from "./modules/user/user.module";
+
 
 import { NotificationsModule } from "./modules/notifications/notifications.module";
 
@@ -37,7 +37,7 @@ import { NotificationsModule } from "./modules/notifications/notifications.modul
     InventoryModule,
     TailorModule,
     AuthModule,
-
+    MeasurementModule,
     NotificationsModule,
 
   ],
